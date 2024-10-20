@@ -22,5 +22,6 @@ from predictions.views import *
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', index),
+    path('', index, name='index'),
+    path('page_test/', page_test, name='page_test'),
 ]
