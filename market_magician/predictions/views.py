@@ -62,8 +62,8 @@ def page_test(request):
     train_size = int(len(X) * 0.8)
     test_size = len(X) - train_size
 
-    X_train, X_test = X[:train_size], X[train_size:]
-    y_train, y_test = y[:train_size], y[train_size:]
+    X_train, X_test = X[:train_size], X[test_size:]
+    y_train, y_test = y[:train_size], y[test_size:]
 
     X_train, y_train = np.array(X_train), np.array(y_train)
     X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
