@@ -168,7 +168,7 @@ def page_test(request):
 
 
 		
-@login_required
+
 def add_to_watchlist(request):
     if request.method == "POST":
         ticker = request.POST.get("ticker").upper()
@@ -181,17 +181,17 @@ def add_to_watchlist(request):
             stock.sector = "Sector Placeholder"
             stock.save()
         # Add the stock to the user's watchlist
-        watchlist_entry, created = Watchlist.objects.get_or_create(user=request.user, stock=stock)
+        watchlist_entry, created = Watchlist.objects.get_or_create(user="testuser", stock=stock)
         if created:
             messages.success(request, f"{stock.ticker} has been added to your watchlist.")
         else:
             messages.info(request, f"{stock.ticker} is already in your watchlist.")
         return redirect("view_watchlist")
     else:
-        return render(request, "predictions/add_stock.html")
+        return render(request, "add_stock.html")
     
 
-@login_required
+
 def view_watchlist(request):
-    watchlist_entries = Watchlist.objects.filter(user=request.user).select_related("stock")
-    return render(request, "predictions/watchlist.html", {"watchlist_entries": watchlist_entries})
+    watchlist_entries = Watchlist.objects.filter(user="testuser").select_related("stock")
+    return render(request, "watchlist.html", {"watchlist_entries": watchlist_entries})
