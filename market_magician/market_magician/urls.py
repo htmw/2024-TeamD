@@ -18,10 +18,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from predictions.views import *
+from predictions import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', index, name='index'),
-    path('page_test/', page_test, name='page_test'),
+    path('', views.index, name='index'),
+    path('page_test/', views.page_test, name='page_test'),
+    path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
+    path('view_watchlist/', views.view_watchlist, name='view_watchlist'),
 ]
