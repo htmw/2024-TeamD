@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Stock, Watchlist
 from django.contrib import messages
 
+from rest_framework import viewsets
+from .serializers import StockSerializer
 
 import yfinance as yf
 import numpy as np
@@ -195,3 +197,8 @@ def add_to_watchlist(request):
 def view_watchlist(request):
     watchlist_entries = Watchlist.objects.filter(user=request.user).select_related("stock")
     return render(request, "watchlist.html", {"watchlist_entries": watchlist_entries})
+
+
+class StockView(viewsets.ModelViewSet):
+    serializer_class = StockSerializer
+    queryset = Stock.objects.all()

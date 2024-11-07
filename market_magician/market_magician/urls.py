@@ -17,8 +17,12 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
 
 from predictions import views
+
+router = routers.DefaultRouter()
+router.register(r'Stock', views.StockView, 'Stock')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -27,4 +31,5 @@ urlpatterns = [
     path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
     path('view_watchlist/', views.view_watchlist, name='view_watchlist'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('api/', include(router.urls)),
 ]

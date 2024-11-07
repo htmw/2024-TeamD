@@ -8,7 +8,8 @@ class Stock(models.Model):
     sector = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.ticker} - {self.company_name}"
+        return self.ticker #changed for testing purposes hkim
+        # return f"{self.ticker} - {self.company_name}"
 
 class Watchlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='watchlist')
