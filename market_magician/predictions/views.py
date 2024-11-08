@@ -1,10 +1,13 @@
+from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from django.template import loader
 
+from django.views.generic import ListView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Stock, Watchlist
 from django.contrib import messages
+from django.db.models import Q
 
 
 import yfinance as yf
@@ -15,7 +18,7 @@ import datetime as dt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-# import pandas_datareader as pdr
+
 import matplotlib.pyplot as plt
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -29,8 +32,14 @@ def index(request):
 
 
 def page_test(request):
-    # get stock, hardcoded for demo
-    stock = "SPY"
+
+    def get_queryset(self):
+        query = self.request.get('q')
+
+        return query
+    
+    # get stock, potentially a non hardcoded way to train stock
+    stock = str(get_queryset())
 
     #Choose the start year, month, and day to begin collecting data from.
     #This directly affects the amount of data the AI can potentially train on
