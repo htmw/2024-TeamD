@@ -22,7 +22,7 @@ from rest_framework import routers
 from predictions import views
 
 router = routers.DefaultRouter()
-router.register(r'Stock', views.StockView, 'Stock')
+# router.register(r'Stock', views.StockView, 'Stock')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -31,5 +31,7 @@ urlpatterns = [
     path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
     path('view_watchlist/', views.view_watchlist, name='view_watchlist'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('Stock/', views.StockView.as_view()),
     path('api/', include(router.urls)),
+    # path('save_text/', views.save_text, name='save_text'),
 ]

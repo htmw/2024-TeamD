@@ -6,7 +6,11 @@ from django.contrib.auth.decorators import login_required
 from .models import Stock, Watchlist
 from django.contrib import messages
 
-from rest_framework import viewsets
+# from rest_framework import viewsets
+# from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from .serializers import StockSerializer
 
 import yfinance as yf
@@ -199,6 +203,21 @@ def view_watchlist(request):
     return render(request, "watchlist.html", {"watchlist_entries": watchlist_entries})
 
 
-class StockView(viewsets.ModelViewSet):
-    serializer_class = StockSerializer
-    queryset = Stock.objects.all()
+class StockView(APIView):
+    def get(self, request):
+        stocks = Stock.objects.all()
+        serializer = StockSerializer(stocks, many=True)
+        return Response(serializer.data)
+    
+    def post(self,  request):
+        serializer = StockSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class StockView(viewsets.ModelViewSet):
+#     serializer_class = StockSerializer
+#     queryset = Stock.objects.all()
+
+

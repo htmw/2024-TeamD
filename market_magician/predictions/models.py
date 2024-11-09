@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 class Stock(models.Model):
     ticker = models.CharField(max_length=10, primary_key=True)
-    company_name = models.CharField(max_length=100)
-    sector = models.CharField(max_length=50)
+    company_name = models.CharField(max_length=100, blank=True)
+    sector = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return self.ticker #changed for testing purposes hkim
