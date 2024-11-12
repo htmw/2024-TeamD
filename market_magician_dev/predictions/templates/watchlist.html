@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Watchlist</title>
+</head>
+<body>
+    <h2>Your Watchlist</h2>
+    {% if watchlist_entries %}
+        <ul>
+            {% for entry in watchlist_entries %}
+                <li>{{ entry.stock.ticker }} - {{ entry.stock.company_name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Your watchlist is empty.</p>
+    {% endif %}
+    <p><a href="{% url 'add_to_watchlist' %}">Add a New Stock</a></p>
+    <p><a href="{% url 'index' %}">Back to Home</a></p>
+</body>
+</html>

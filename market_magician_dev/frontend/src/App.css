@@ -1,0 +1,70 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  text-align: center;
+}
+
+.header {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav a {
+  margin-left: 20px;
+  color: white;
+  text-decoration: none;
+}
+
+.main-section {
+  padding: 50px;
+  background-color: #f4f4f4;
+}
+
+.learn-more-btn {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.stock-info {
+  padding: 30px;
+  background-color: #fff;
+}
+
+.stock-info h2 {
+  margin-bottom: 20px;
+}
+
+
+.specific-stock-info {
+  background-color: #fff;
+  padding: 40px;
+}
+
+.content-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.content-box {
+  background-color: #f4f4f4;
+  padding: 20px;
+  width: 22%;
+  border: 1px solid #ddd;
+}
+
+.footer {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+}
