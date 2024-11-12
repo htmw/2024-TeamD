@@ -7,6 +7,7 @@ const Stocks = () => {
             <p>
                 Market Magician’s overall stocks.
             </p>
+
         </section>
     );
 };

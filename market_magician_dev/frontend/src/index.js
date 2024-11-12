@@ -1,29 +1,18 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createRoot } from 'react-dom';
+import { BrowserRouter } from "react-router-dom";
 import './index.css';
-import Stocks from "./components/Stocks";
-import Home from "./components/Home";
-import LogIn from "./components/Login";
-import SignUp from "./components/SignUp";
-import MainContent from './components/MainContent';
+import App from './App';
 
 
-export default function App() {
-  return (
+const container = document.getElementById('root');
+const root = createRoot(container);
+
+root.render(
+  <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainContent />}>
-          <Route index element={<Home />} />
-          <Route path="Stocks" element={<Stocks />} />
-          <Route path="LogIn" element={<LogIn />} />
-          <Route path="SignUp" element={<SignUp />} />
-        </Route>
-      </Routes>
+      <App />
     </BrowserRouter>
-  );
-}
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+  </React.StrictMode>
+);
 

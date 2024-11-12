@@ -1,6 +1,6 @@
 import React from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Header from "./components/Header";
-import MainContent from "./components/MainContent";
 import StockInfo from "./components/StockInfo";
 import SpecificStockInfo from "./components/SpecificStockInfo";
 import Footer from "./components/Footer";
@@ -15,14 +15,12 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <MainContent />
-      <StockInfo />
-      <SpecificStockInfo />
-      <Home />
-      <Login />
-      <SignUp />
-      <Stocks />
-      <Footer />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/components/Stocks" element={<Stocks />} />
+        <Route path="/components/Login" element={<Login />} />
+        <Route path="/components/SignUp" element={<SignUp />} />
+      </Routes>
     </div>
   );
 }
