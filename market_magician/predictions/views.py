@@ -25,6 +25,9 @@ from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 from keras.layers import LSTM, Dense
 
+class SearchResultsView(ListView):
+    model = Stock
+    template_name = 'search_results.html'
 
 # landing page
 def index(request):

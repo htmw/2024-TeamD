@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from predictions import views
+from predictions.views import SearchResultsView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -27,4 +28,5 @@ urlpatterns = [
     path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
     path('view_watchlist/', views.view_watchlist, name='view_watchlist'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('search/', SearchResultsView.as_view(), name="search_results")
 ]
