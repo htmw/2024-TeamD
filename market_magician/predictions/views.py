@@ -25,24 +25,15 @@ from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 from keras.layers import LSTM, Dense
 
-class SearchResultsView(ListView):
-    model = Stock
-    template_name = 'search_results.html'
+from django.http import HttpResponse
 
 # landing page
 def index(request):
     return render(request, 'index.html')
 
-
-def page_test(request):
-
-    def get_queryset(self):
-        query = self.request.get('q')
-
-        return query
-    
-    # get stock, potentially a non hardcoded way to train stock
-    stock = str(get_queryset())
+  # get stock, potentially a non hardcoded way to train stock
+def display_prediction(request):
+    stock = request.GET.get('stock', 'SPY')
 
     #Choose the start year, month, and day to begin collecting data from.
     #This directly affects the amount of data the AI can potentially train on
@@ -122,15 +113,18 @@ def page_test(request):
     # Selecting the 'Close' price and converting to numpy array
     if data.empty:
         pass
-        # print(f"Error: Could not fetch data for {stock}. Check the stock symbol.")
+    # print(f"Error: Could not fetch data for {stock}. Check the stock symbol.")
     else:
         closing_prices = data['Close'].values
         # Scaling the data
         scaler = MinMaxScaler(feature_range=(0,1))
         scaled_data = scaler.fit_transform(closing_prices.reshape(-1,1))
 
+        #length of Data so we can dynamically call for the data
+        data_len = len(scaled_data)
+
         # Since we need the last 60 days to predict the next day, we reshape the data accordingly
-        X_latest = np.array([scaled_data[-60:].reshape(60)])
+        X_latest = np.array([scaled_data[-data_len:].reshape(data_len)])
 
         # Reshaping the data for the model (adding batch dimension)
         X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
@@ -143,11 +137,11 @@ def page_test(request):
         scaler_for_prediction.fit(closing_prices.reshape(-1, 1))  # Fit to original closing prices
 
 
-    # Predict the next 4 days iteratively
+    # Predict the next 30 days iteratively
     predicted_prices = []
     current_batch = scaled_data[-60:].reshape(1, 60, 1)  # Most recent 60 days
 
-    for i in range(30):  # Predicting 4 days
+    for i in range(30):  # Predicting 30 days
         next_prediction = model.predict(current_batch)
         next_prediction_reshaped = next_prediction.reshape(1, 1, 1)
         current_batch = np.append(current_batch[:, 1:, :], next_prediction_reshaped, axis=1)
@@ -166,7 +160,7 @@ def page_test(request):
     # Plotting the predicted data
     plt.plot(prediction_dates, predicted_prices, linestyle='-', marker='o', color='red', label='Predicted Data')
 
-    plt.title("SPY Stock Price: Last 60 Days and Next 4 Days Predicted")
+    plt.title("{stock} Stock Price: Last 60 Days and Next 30 Days Predicted")
     plt.xlabel('Date')
     plt.ylabel('Price')
     plt.legend()
@@ -179,6 +173,13 @@ def page_test(request):
     return response
 
 
+def page_test(request):
+
+    def get_queryset(self):
+        query = self.request.get('q')
+
+        return query
+    
 		
 @login_required
 def add_to_watchlist(request):
