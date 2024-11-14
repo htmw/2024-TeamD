@@ -1,9 +1,7 @@
-import logo from './logo.svg';
-import './App.css';
 import React, { useState } from "react";
 import axios from 'axios';
 
-function App() {
+const Send_ticker = () => {
   // const [formData, setFormData] = useState('');
 
   // const handleSubmit = (event) => {
@@ -73,15 +71,27 @@ function App() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // axios.post('http://localhost:8000/api/Stock/', formData)
-    axios.post('http://localhost:8000/Stock/', formData)
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    fetch('http://localhost:8000/Stock/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(formData => console.log(formData));
   };
+
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   axios.post('http://localhost:8000/Stock/', formData)
+  //     .then(response => {
+  //       console.log(response);
+  //     })
+  //     .catch(error => {
+  //       console.error(error);
+  //     });
+  // };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -137,7 +147,8 @@ function App() {
     //     </a>
     //   </header>
     // </div>
+    
   );
 }
 
-export default App;
+export default Send_ticker;

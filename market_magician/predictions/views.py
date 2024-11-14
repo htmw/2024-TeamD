@@ -209,12 +209,19 @@ class StockView(APIView):
         serializer = StockSerializer(stocks, many=True)
         return Response(serializer.data)
     
-    def post(self,  request):
-        serializer = StockSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self,  request):
+    #     serializer = StockSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        data = request.data 
+        print(data['ticker'])
+        print('done')
+        # Process the data (e.g., save to database, send email, etc.)
+        return Response({"message": "Data received successfully"}, status=status.HTTP_200_OK)
 
 # class StockView(viewsets.ModelViewSet):
 #     serializer_class = StockSerializer
