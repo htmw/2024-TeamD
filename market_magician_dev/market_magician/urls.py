@@ -30,13 +30,14 @@ router = routers.DefaultRouter()
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', views.index, name='index'),
-    path('page_test/', views.page_test, name='page_test'),
     path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
     path('view_watchlist/', views.view_watchlist, name='view_watchlist'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('api/predict/', views.predict_view, name='predict'),
     path('Stock/', views.StockView.as_view()),
     path('api/', include(router.urls)),
+    path('search/', views.display_prediction, name="search_results"),
+    path('page_test/', views.page_test, name='page_test'),
 ]
 
 # if debug == True during development we can serve media files

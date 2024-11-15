@@ -5,10 +5,9 @@
 <h1>Landing Page</h1>
     <p><a href="{% url 'add_to_watchlist' %}">Add a Stock to Your Watchlist</a></p>
     <p><a href="{% url 'view_watchlist' %}">View Your Watchlist</a></p>
-    <!--<p><a href="{% url 'page_test' %}">Run Stock Prediction</a></p>-->
+    <p><a href="{% url 'page_test' %}">Run Stock Prediction</a></p>
     <form action="{% url 'search_results' %}" method="get">
         <input name="q" type="text" placeholder="Search...">
     </form>
-
 </body>
 </html>

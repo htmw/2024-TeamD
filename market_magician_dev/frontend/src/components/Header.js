@@ -45,6 +45,11 @@ const Header = () => {
                             <i className='fa fa-address-card fa-lg' /> SignUp
                         </NavLink>
                     </NavItem>
+										<NavItem>
+                        <NavLink className='nav-link' to='/sendTicker'>
+                            <i className='fa fa-info fa-lg' /> Search Ticker
+                        </NavLink>
+                    </NavItem>
                 </Nav>
 
             </Collapse>
