@@ -218,8 +218,14 @@ class StockView(APIView):
 
     def post(self, request):
         data = request.data 
-        print(data['ticker'])
-        print('done')
+        df = pd.read_csv('data/nasdaq_nyse_listing.csv')
+        validSet = df[df.columns[0]].to_list()
+
+        if data['ticker'].upper() not in validSet:
+            print(f"\nTicker Symbol: \"{data['ticker'].upper()}\" is not valid")
+            return Response({"message": "Ticker not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        print(f"\nTicker Symbol: \"{data['ticker'].upper()}\" received successfully")
         # Process the data (e.g., save to database, send email, etc.)
         return Response({"message": "Data received successfully"}, status=status.HTTP_200_OK)
 

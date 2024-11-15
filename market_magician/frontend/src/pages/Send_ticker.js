@@ -58,8 +58,8 @@ const Send_ticker = () => {
 
   const [formData, setFormData] = useState({
     ticker: "",
-    company_name: "",
-    sector: "",
+    // company_name: "",
+    // sector: "",
   });
 
   const handleChange = (event) => {
@@ -105,7 +105,7 @@ const Send_ticker = () => {
         />
       </label>
       <br />
-      <label>
+      {/* <label>
         Company Name:
         <input 
           type='text' 
@@ -123,7 +123,7 @@ const Send_ticker = () => {
           value={formData.sector}
           onChange={handleChange}
         />
-      </label>
+      </label> */}
 
       <button type='submit'>Submit</button>
     </form>

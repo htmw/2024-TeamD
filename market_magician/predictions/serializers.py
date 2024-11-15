@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Stock
 
-import yfinance as yf
+# import yfinance as yf
 import pandas as pd
 
 class StockSerializer(serializers.ModelSerializer):
