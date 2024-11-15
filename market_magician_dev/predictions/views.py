@@ -1,11 +1,15 @@
 from django.http import HttpResponse
+from django.db.models.query import QuerySet
+from django.template import loader
 
-from django.shortcuts import render, redirect
+from django.views.generic import ListView
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Stock, Watchlist, TrainedModel
 from django.contrib import messages
 import os
 from django.conf import settings 
+from django.db.models import Q
 
 import yfinance as yf
 import numpy as np
@@ -30,98 +34,6 @@ from rest_framework.response import Response
 # landing page
 def index(request):
     return render(request, 'index.html')
-
-
-def page_test(request):
-    # Input ticker from frontend (this can be dynamic from a form or URL param)
-    stock = request.GET.get('ticker', 'AAPL')  # You can use a GET or POST method to pass the ticker
-
-    # Check if the model is already trained
-    model = load_trained_model(stock)
-    
-    if model is None:
-        # If model does not exist, train it
-        start_year = 2010
-        start_month = 1
-        start_day = 1
-        start = dt.date(start_year, start_month, start_day)
-        now = dt.datetime.now()
-
-        df = yf.download(stock, start, now)
-        df.ffill(inplace=True)
-
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        df_scaled = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
-
-        X, y = [], []
-        for i in range(90, len(df_scaled)):
-            X.append(df_scaled[i-90:i, 0])
-            y.append(df_scaled[i, 0])
-
-        train_size = int(len(X) * 0.8)
-        test_size = len(X) - train_size
-
-        X_train, X_test = X[:train_size], X[test_size:]
-        y_train, y_test = y[:train_size], y[test_size:]
-
-        X_train, y_train = np.array(X_train), np.array(y_train)
-        X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
-
-        # Create and train the model
-        model = Sequential()
-        model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
-        model.add(LSTM(units=50, return_sequences=True))
-        model.add(LSTM(units=50, return_sequences=False))
-        model.add(Dense(1))
-        model.compile(optimizer='adam', loss='mean_squared_error')
-
-        model.fit(X_train, y_train, epochs=50, batch_size=25, validation_split=0.2)
-        
-        # Save the trained model
-        save_trained_model(stock, model)
-
-    # After model is trained (or loaded), use it to predict the next stock prices
-    data = yf.download(stock, period='3mo', interval='1d')
-
-    # Scale and prepare the data for prediction
-    if data.empty:
-        pass  # Handle error as needed
-    else:
-        closing_prices = data['Close'].values
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled_data = scaler.fit_transform(closing_prices.reshape(-1, 1))
-
-        X_latest = np.array([scaled_data[-60:].reshape(60)])
-        X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
-
-        # Making predictions
-        predicted_stock_price = model.predict(X_latest)
-        predicted_stock_price = scaler.inverse_transform(predicted_stock_price)
-
-        # For next 30 days prediction
-        predicted_prices = []
-        current_batch = scaled_data[-60:].reshape(1, 60, 1)
-        for _ in range(30):
-            next_prediction = model.predict(current_batch)
-            next_prediction_reshaped = next_prediction.reshape(1, 1, 1)
-            current_batch = np.append(current_batch[:, 1:, :], next_prediction_reshaped, axis=1)
-            predicted_prices.append(scaler.inverse_transform(next_prediction)[0, 0])
-
-    # Plotting the results
-    fig = plt.figure(figsize=(10, 6))
-    plt.plot(data.index[-90:], data['Close'][-90:], linestyle='-', marker='o', color='blue', label='Actual Data')
-    prediction_dates = pd.date_range(start=data.index[-1] + pd.Timedelta(days=1), periods=30)
-    plt.plot(prediction_dates, predicted_prices, linestyle='-', marker='o', color='red', label='Predicted Data')
-    plt.title(f"{stock} Stock Price: Last 60 Days and Next 30 Days Predicted")
-    plt.xlabel('Date')
-    plt.ylabel('Price')
-    plt.legend()
-
-    from matplotlib.backends.backend_agg import FigureCanvasAgg
-    canvas = FigureCanvasAgg(fig)
-    response = HttpResponse(content_type='image/png')
-    canvas.print_png(response)
-    return response
 
 
 def classify_prediction(risk, low_threshold, high_threshold):
@@ -297,3 +209,4 @@ def add_to_watchlist(request):
 def view_watchlist(request):
     watchlist_entries = Watchlist.objects.filter(user=request.user).select_related("stock")
     return render(request, "watchlist.html", {"watchlist_entries": watchlist_entries})
+		
