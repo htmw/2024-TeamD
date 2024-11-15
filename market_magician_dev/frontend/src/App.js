@@ -7,6 +7,7 @@ import BuyStocks from "./pages/BuyStocks";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import Send_ticker from './pages/Send_ticker';
 import './App.css';
 
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/buyStocks" element={<BuyStocks />} /> {/* Route for BuyStocks */}
         <Route path="/components/Login" element={<Login />} />
         <Route path="/components/SignUp" element={<SignUp />} />
+        <Route path="/sendTicker" element={<Send_ticker />} />
       </Routes>
     </div>
   );

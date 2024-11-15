@@ -5,12 +5,15 @@ from django.template import loader
 from django.views.generic import ListView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Stock, Watchlist, TrainedModel
 from django.contrib import messages
-import os
+
 from django.conf import settings 
 from django.db.models import Q
 
+from .serializers import StockSerializer
+from .models import Stock, Watchlist, TrainedModel
+
+import os
 import yfinance as yf
 import numpy as np
 import pandas as pd
@@ -28,6 +31,8 @@ from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential, load_model
 from keras.layers import LSTM, Dense
 
+from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -210,3 +215,33 @@ def view_watchlist(request):
     watchlist_entries = Watchlist.objects.filter(user=request.user).select_related("stock")
     return render(request, "watchlist.html", {"watchlist_entries": watchlist_entries})
 		
+
+class StockView(APIView):
+    def get(self, request):
+        stocks = Stock.objects.all()
+        serializer = StockSerializer(stocks, many=True)
+        return Response(serializer.data)
+    
+    # def post(self,  request):
+    #     serializer = StockSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        data = request.data 
+        df = pd.read_csv('data/nasdaq_nyse_listing.csv')
+        validSet = df[df.columns[0]].to_list()
+
+        if data['ticker'].upper() not in validSet:
+            print(f"\nTicker Symbol: \"{data['ticker'].upper()}\" is not valid")
+            return Response({"message": "Ticker not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        print(f"\nTicker Symbol: \"{data['ticker'].upper()}\" received successfully")
+        # Process the data (e.g., save to database, send email, etc.)
+        return Response({"message": "Data received successfully"}, status=status.HTTP_200_OK)
+
+# class StockView(viewsets.ModelViewSet):
+#     serializer_class = StockSerializer
+#     queryset = Stock.objects.all()

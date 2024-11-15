@@ -20,7 +20,12 @@ from django.urls import path, include
 from django.conf import settings  
 from django.conf.urls.static import static 
 
+from rest_framework import routers
+
 from predictions import views
+
+router = routers.DefaultRouter()
+# router.register(r'Stock', views.StockView, 'Stock')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -30,6 +35,8 @@ urlpatterns = [
     path('view_watchlist/', views.view_watchlist, name='view_watchlist'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('api/predict/', views.predict_view, name='predict'),
+    path('Stock/', views.StockView.as_view()),
+    path('api/', include(router.urls)),
 ]
 
 # if debug == True during development we can serve media files
