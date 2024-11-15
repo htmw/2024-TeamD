@@ -1,10 +1,9 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Header from "./components/Header";
-import StockInfo from "./components/StockInfo";
-import SpecificStockInfo from "./components/SpecificStockInfo";
+//import StockInfo from "./components/StockInfo";
 import Footer from "./components/Footer";
-import Stocks from "./components/Stocks";
+import BuyStocks from "./pages/BuyStocks";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
@@ -17,7 +16,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/components/Stocks" element={<Stocks />} />
+        <Route path="/buyStocks" element={<BuyStocks />} /> {/* Route for BuyStocks */}
         <Route path="/components/Login" element={<Login />} />
         <Route path="/components/SignUp" element={<SignUp />} />
       </Routes>

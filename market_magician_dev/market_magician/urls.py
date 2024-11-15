@@ -17,6 +17,8 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings  
+from django.conf.urls.static import static 
 
 from predictions import views
 
@@ -27,4 +29,9 @@ urlpatterns = [
     path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
     path('view_watchlist/', views.view_watchlist, name='view_watchlist'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('api/predict/', views.predict_view, name='predict'),
 ]
+
+# if debug == True during development we can serve media files
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
