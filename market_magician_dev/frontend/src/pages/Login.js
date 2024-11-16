@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentUser, selectCurrentUser } from './userSlice';
+import { setCurrentUser, selectCurrentUser } from '../components/userSlice';
 import {
     Modal,
     ModalHeader,
@@ -12,7 +12,7 @@ import {
 } from 'reactstrap';
 import defaultAvatar from '../assets/images/stocks.png';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
-import { validateUserLoginForm } from './validateUserLoginForm';
+import { validateUserLoginForm } from '../components/validateUserLoginForm';
 
 
 const Login = () => {
