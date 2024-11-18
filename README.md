@@ -1,6 +1,5 @@
 # 2024F-Artificial-Asynchrony
 ## Product Description
-(Add Description)
 
 An AI that uses historical data, news flow, and intra-day trading data to determine entry and exit points of a stock/fund/crypto using a trained regression model to maximize profits.
 
