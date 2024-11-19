@@ -1,12 +1,17 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+
 import Header from './components/Header';
-import Home from './components/Home';
-import Stocks from './components/Stocks';
-import Login from './components/Login';
-import SignUp from './components/SignUp';
 import Footer from './components/Footer';
+
+import Home from './pages/Home';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import BuyStocks from './pages/BuyStocks';
+import SearchTicker from './pages/SearchTicker';
+
 import './App.css';
+
 
 function App() {
   return (
@@ -14,9 +19,10 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/stocks" element={<Stocks />} />
+        <Route path="/buyStocks" element={<BuyStocks />} /> {/* Route for BuyStocks */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/searchTicker" element={<SearchTicker />} />
       </Routes>
       <Footer />
     </div>
@@ -24,9 +30,4 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
 

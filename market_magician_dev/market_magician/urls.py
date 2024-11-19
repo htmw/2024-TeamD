@@ -17,14 +17,29 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings  
+from django.conf.urls.static import static 
+
+from rest_framework import routers
 
 from predictions import views
+
+router = routers.DefaultRouter()
+# router.register(r'Stock', views.StockView, 'Stock')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', views.index, name='index'),
-    path('page_test/', views.page_test, name='page_test'),
     path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
     path('view_watchlist/', views.view_watchlist, name='view_watchlist'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('api/predict/', views.predict_view, name='predict'),
+    path('Stock/', views.StockView.as_view()),
+    path('api/', include(router.urls)),
+    path('search/', views.display_prediction, name="search_results"),
+    path('page_test/', views.page_test, name='page_test'),
 ]
+
+# if debug == True during development we can serve media files
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
