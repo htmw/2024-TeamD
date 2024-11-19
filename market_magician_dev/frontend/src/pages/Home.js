@@ -14,6 +14,8 @@ function Home() {
                 <p><strong>Microsoft</strong>: A company with a strong ecosystem of products and services</p>
                 <p><strong>Nvidia</strong>: A leader in AI chip development</p>
                 <p><strong>Tesla</strong>: A leader in electric vehicles</p>
+
+                <p>TEST</p>
                 <button className="cta-button">Learn More About The Maginificent Seven Stocks</button>
             </section>
 
