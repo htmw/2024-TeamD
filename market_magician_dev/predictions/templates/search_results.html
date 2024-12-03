@@ -1,0 +1,12 @@
+<!--displays results of search -->
+
+<h1>Search Results</h1>
+
+<u1>
+    {% for stock in object_list %}
+        <li>
+            {{Stock.ticker}}, {{Stock.company_name}}
+        </li>
+    {% endfor %}
+
+</u1>
