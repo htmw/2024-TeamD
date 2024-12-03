@@ -9,5 +9,14 @@
     <form action="{% url 'search_results' %}" method="get">
         <input name="q" type="text" placeholder="Search...">
     </form>
+    <form action="{% url 'start_year' %}" method="get">
+        <input name="q" type="text" placeholder="2010">
+    </form>
+    <form action="{% url 'start_month' %}" method="get">
+        <input name="q" type="text" placeholder="1">
+    </form>
+    <form action="{% url 'start_day' %}" method="get">
+        <input name="q" type="text" placeholder="1">
+    </form>
 </body>
 </html>
