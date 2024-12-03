@@ -19,7 +19,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/buyStocks" element={<BuyStocks />} /> {/* Route for BuyStocks */}
+        <Route path="/buyStocks" element={<BuyStocks />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/searchTicker" element={<SearchTicker />} />

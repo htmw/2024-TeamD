@@ -36,11 +36,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-# landing page
-def index(request):
-    return render(request, 'index.html')
-
-
+# helper functions
 def classify_prediction(risk, low_threshold, high_threshold):
     if risk < low_threshold:
         return "Low"
@@ -48,6 +44,60 @@ def classify_prediction(risk, low_threshold, high_threshold):
         return "High"
     else:
         return "Medium"
+
+def train_model(ticker):
+    start_year = 2010
+    start_month = 1
+    start_day = 1
+    start = dt.date(start_year, start_month, start_day)
+    now = dt.datetime.now()
+
+    df = yf.download(ticker, start, now)
+    df.ffill(inplace=True)
+
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    df_scaled = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
+
+    X, y = [], []
+    for i in range(90, len(df_scaled)):
+        X.append(df_scaled[i-90:i, 0])
+        y.append(df_scaled[i, 0])
+
+    train_size = int(len(X) * 0.8)
+    test_size = len(X) - train_size
+
+    X_train, X_test = X[:train_size], X[test_size:]
+    y_train, y_test = y[:train_size], y[test_size:]
+
+    X_train, y_train = np.array(X_train), np.array(y_train)
+    X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+
+    # Create and train the model
+    model = Sequential()
+    model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
+    model.add(LSTM(units=50, return_sequences=True))
+    model.add(LSTM(units=50, return_sequences=False))
+    model.add(Dense(1))
+    model.compile(optimizer='adam', loss='mean_squared_error')
+
+    model.fit(X_train, y_train, epochs=50, batch_size=25, validation_split=0.2)
+    return model
+
+def make_prediction(ticker, model):
+    df = yf.download(ticker, period="3mo", interval="1d")
+
+    if df.empty:
+        return df, None
+
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaled_data = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
+    X_latest = np.array([scaled_data[-60:].reshape(60, 1)])
+    X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
+
+    # Predict the stock price
+    predicted_price = model.predict(X_latest)
+    predicted_price = scaler.inverse_transform(predicted_price)[0, 0]
+    return df, predicted_price
 
 @api_view(['POST'])
 def predict_view(request):
@@ -58,102 +108,29 @@ def predict_view(request):
 
     if model is None:
         # If the model is not trained, train it
-        start_year = 2010
-        start_month = 1
-        start_day = 1
-        start = dt.date(start_year, start_month, start_day)
-        now = dt.datetime.now()
-
-        df = yf.download(ticker, start, now)
-        df.ffill(inplace=True)
-
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        df_scaled = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
-
-        X, y = [], []
-        for i in range(90, len(df_scaled)):
-            X.append(df_scaled[i-90:i, 0])
-            y.append(df_scaled[i, 0])
-
-        train_size = int(len(X) * 0.8)
-        test_size = len(X) - train_size
-
-        X_train, X_test = X[:train_size], X[test_size:]
-        y_train, y_test = y[:train_size], y[test_size:]
-
-        X_train, y_train = np.array(X_train), np.array(y_train)
-        X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
-
-        # Create and train the model
-        model = Sequential()
-        model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
-        model.add(LSTM(units=50, return_sequences=True))
-        model.add(LSTM(units=50, return_sequences=False))
-        model.add(Dense(1))
-        model.compile(optimizer='adam', loss='mean_squared_error')
-
-        model.fit(X_train, y_train, epochs=50, batch_size=25, validation_split=0.2)
+        model = train_model(ticker)
 
         # Save the trained model
         save_trained_model(ticker, model)
 
-        # After model is trained (or loaded), use it to predict the next stock prices
-        df = yf.download(ticker, period="3mo", interval="1d")
+    # After model is trained (or loaded), use it to predict the next stock prices
+    df, predicted_price = make_prediction(ticker, model)
 
-        if df.empty:
-            return Response({"error": f"Data not available for {ticker}."}, status=404)
+    if df.empty:
+        return Response({"error": f"Data not available for {ticker}."}, status=404)
+    
+    # Calculate risk and classification
+    low_threshold = np.percentile(df['Close'], 33)
+    high_threshold = np.percentile(df['Close'], 66)
+    predicted_risk = classify_prediction(predicted_price, low_threshold, high_threshold)
 
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled_data = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
-        X_latest = np.array([scaled_data[-60:].reshape(60, 1)])
-        X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
-
-        # Predict the stock price
-        predicted_price = model.predict(X_latest)
-        predicted_price = scaler.inverse_transform(predicted_price)[0, 0]
-
-        # Calculate risk and classification
-        risk = predicted_price
-        low_threshold = np.percentile(df['Close'], 33)
-        high_threshold = np.percentile(df['Close'], 66)
-        predicted_risk = classify_prediction(risk, low_threshold, high_threshold)
-
-        return Response({
-            "ticker": ticker,
-            "predicted_risk": predicted_risk,
-            "classification": predicted_risk,
-            "low_threshold": low_threshold,
-            "high_threshold": high_threshold
-        })
-    else:
-        # Model already trained, proceed with prediction logic
-        df = yf.download(ticker, period="3mo", interval="1d")
-
-        if df.empty:
-            return Response({"error": f"Data not available for {ticker}."}, status=404)
-
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled_data = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
-        X_latest = np.array([scaled_data[-60:].reshape(60, 1)])
-        X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
-
-        # Predict the stock price
-        predicted_price = model.predict(X_latest)
-        predicted_price = scaler.inverse_transform(predicted_price)[0, 0]
-
-        # Calculate risk and classification
-        risk = predicted_price
-        low_threshold = np.percentile(df['Close'], 33)
-        high_threshold = np.percentile(df['Close'], 66)
-        predicted_risk = classify_prediction(risk, low_threshold, high_threshold)
-
-        return Response({
-            "ticker": ticker,
-            "predicted_risk": predicted_risk,
-            "classification": predicted_risk,
-            "low_threshold": low_threshold,
-            "high_threshold": high_threshold
-        })
+    return Response({
+        "ticker": ticker,
+        "predicted_risk": predicted_risk,
+        "classification": predicted_risk,
+        "low_threshold": low_threshold,
+        "high_threshold": high_threshold
+    })
 
 
 def save_trained_model(ticker, model):
@@ -395,3 +372,7 @@ def page_test(request):
         query = self.request.get('q')
 
         return query
+    
+# landing page      may now be uneccessary
+def index(request):
+    return render(request, 'index.html')
