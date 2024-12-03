@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.conf import settings 
 from django.db.models import Q
 
-from .serializers import StockSerializer
+from .serializers import StockSerializer, UserRegistrationSerializer
 from .models import Stock, Watchlist, TrainedModel
 
 import os
@@ -31,10 +31,11 @@ from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential, load_model
 from keras.layers import LSTM, Dense
 
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 
 # landing page
 def index(request):
@@ -242,6 +243,24 @@ class StockView(APIView):
         # Process the data (e.g., save to database, send email, etc.)
         return Response({"message": "Data received successfully"}, status=status.HTTP_200_OK)
 
+class UserRegistrationView(generics.CreateAPIView):
+    serializer_class = UserRegistrationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(
+                {
+                    "message": "User created successfully.",
+                    "user": {
+                        "username": user.username,
+                    }
+                },
+                status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # class StockView(viewsets.ModelViewSet):
 #     serializer_class = StockSerializer
 #     queryset = Stock.objects.all()
