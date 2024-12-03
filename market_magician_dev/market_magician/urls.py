@@ -37,6 +37,9 @@ urlpatterns = [
     path('Stock/', views.StockView.as_view()),
     path('api/', include(router.urls)),
     path('search/', views.display_prediction, name="search_results"),
+    path('search/', views.display_prediction, name="start_year"),
+    path('search/', views.display_prediction, name="start_month"),
+    path('search/', views.display_prediction, name="start_day"),
     path('page_test/', views.page_test, name='page_test'),
 ]
 
