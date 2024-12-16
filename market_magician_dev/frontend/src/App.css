@@ -143,6 +143,14 @@ body {
   border: 1px solid #ddd;
 }
 
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+
 .login-form,
 .signup-form,
 .search-form {
@@ -152,6 +160,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #f9f9f9;
+  text-align: center;
 }
 
 .login-form h2,
@@ -163,10 +172,47 @@ body {
   margin-bottom: 15px;
 }
 
+.login-form div {
+  margin-bottom: 15px;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+
+.login-form .input-field {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.login-form button:hover {
+  background-color: #0056b3;
+}
+
 .input-field {
   width: 90%;
   padding: 10px;
-  margin: 10px 0;
+  margin-top: 8px;
+  margin-bottom: 16px;
   border-radius: 5px;
   border: 1px solid #ccc;
   box-sizing: border-box;
@@ -275,4 +321,53 @@ body {
   text-align: center;
   padding: 10px 0;
   position: relative;
+  bottom: 0;
+}
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background-color: #f4f4f4; /* background color */
+}
+
+.signup-form {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px; /* Set a max-width for the form */
+}
+
+/* Style for each input group */
+.signup-form div {
+  margin-bottom: 15px;
+}
+
+.signup-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.signup-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.signup-form button:hover {
+  background-color: #0056b3;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
 }
