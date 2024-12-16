@@ -4,12 +4,13 @@ from django.template import loader
 
 from django.views.generic import ListView
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
 from django.conf import settings 
 from django.db.models import Q
 
+from .models import Watchlist
 from .serializers import StockSerializer
 from .models import Stock, Watchlist, TrainedModel
 
@@ -32,9 +33,17 @@ from tensorflow.keras.models import Sequential, load_model
 from keras.layers import LSTM, Dense
 
 from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import logout
+from django.contrib.auth.models import User
+from rest_framework.serializers import ValidationError
+
 
 # landing page
 def index(request):
@@ -187,35 +196,62 @@ def load_trained_model(ticker):
     except (Stock.DoesNotExist, TrainedModel.DoesNotExist, Exception) as e:
         return None
 
-@login_required
-def add_to_watchlist(request):
-    if request.method == "POST":
-        ticker = request.POST.get("ticker").upper()
-        # Validate the ticker symbol here need to add API to Yfiniance to check if the ticker is valid other option is to use a list with predefined 
-        # tickers this will make the list static and not dynamic like the API approach
-        stock, created = Stock.objects.get_or_create(ticker=ticker)
-        if created:
-            # Fetch and save additional stock data if needed
-            stock.company_name = "Company Name Placeholder"
-            stock.sector = "Sector Placeholder"
-            stock.save()
-        # Add the stock to the user's watchlist
-        watchlist_entry, created = Watchlist.objects.get_or_create(user=request.user, stock=stock)
-        if created:
-            messages.success(request, f"{stock.ticker} has been added to your watchlist.")
+class SignupView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        email = request.data.get("email")
+
+        if not username or not password or not email:
+            return Response({"error": "Username, password, and email are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the username already exists
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new user
+        user = User.objects.create_user(username=username, password=password, email=email)
+        
+        # Automatically log the user in after successful registration
+        login(request, user)
+
+        return Response({"message": "Signup successful"}, status=status.HTTP_201_CREATED)
+
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        
+        user = authenticate(username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
         else:
-            messages.info(request, f"{stock.ticker} is already in your watchlist.")
-        return redirect("view_watchlist")
-    else:
-        return render(request, "add_stock.html")
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        logout(request)
+        return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
     
+class AddToWatchlistView(APIView):
+    permission_classes = [IsAuthenticated]
 
-@login_required
-def view_watchlist(request):
-    watchlist_entries = Watchlist.objects.filter(user=request.user).select_related("stock")
-    return render(request, "watchlist.html", {"watchlist_entries": watchlist_entries})
-		
+    def post(self, request, *args, **kwargs):
+        # logic for adding to the watchlist
+        return Response({"message": "Added to watchlist"}, status=200)
 
+class ViewWatchlistView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        # Logic for viewing the watchlist
+        return Response({"message": "Your watchlist"}, status=200)
+
+    
 class StockView(APIView):
     def get(self, request):
         stocks = Stock.objects.all()
@@ -387,6 +423,8 @@ def display_prediction(request):
     response = HttpResponse(content_type='image/png')
     canvas.print_png(response)
     return response
+
+
 
 
 def page_test(request):

@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const Stocks = () => {
@@ -16,4 +17,3 @@ const Stocks = () => {
 
 
 export default Stocks;
-
