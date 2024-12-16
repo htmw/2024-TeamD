@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StockList } from '../helpers/StockList';
 import StockItem from '../components/StockItem';
 import axios from 'axios';
+import '../App.css';
 
 function BuyStocks() {
   const [predictions, setPredictions] = useState({});
