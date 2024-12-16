@@ -35,6 +35,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('api/predict/', views.predict_view, name='predict'),
     path('Stock/', views.StockView.as_view()),
+    path('api/register/', views.UserRegistrationView.as_view(), name="user-registration"),
     path('api/', include(router.urls)),
     path('search/', views.display_prediction, name="search_results"),
     path('page_test/', views.page_test, name='page_test'),
