@@ -6,6 +6,7 @@ import '../App.css';
 
 function BuyStocks() {
   const [predictions, setPredictions] = useState({});
+  const [currentPrices, setCurrentPrices] = useState({});  // To store current prices
   const [loading, setLoading] = useState({});  // Track loading state per stock
 
   // Function to handle icon click
@@ -19,15 +20,29 @@ function BuyStocks() {
 
     try {
       const response = await axios.post('http://localhost:8000/api/predict/', { ticker });
+      console.log("Full Prediction Response Data:", response.data); // Log the entire response to check structure
+      // Store both the predicted and current prices
       setPredictions((prev) => ({
         ...prev,
         [ticker]: response.data,
+      }));
+
+      // Fetch current price from an API or backend 
+      const currentPriceResponse = await axios.get(`http://localhost:8000/api/current-price/${ticker}/`);
+      console.log('Current Price Response:', currentPriceResponse.data); // Log the current price response
+      setCurrentPrices((prev) => ({
+        ...prev,
+        [ticker]: currentPriceResponse.data.current_price,
       }));
     } catch (error) {
       console.error("Error fetching prediction", error);
       setPredictions((prev) => ({
         ...prev,
         [ticker]: { Predicted_price: "--", predicted_risk: "Error" },
+      }));
+      setCurrentPrices((prev) => ({
+        ...prev,
+        [ticker]: "Error Loading", // Show placeholder for current price on error
       }));
     } finally {
       setLoading((prev) => ({
@@ -51,6 +66,7 @@ function BuyStocks() {
             ticker={stockItem.ticker}
             onClick={() => handleStockClick(stockItem.ticker)}
             prediction={predictions[stockItem.ticker] || { Predicted_price: "--", predicted_risk: loading[stockItem.ticker] ? "Fetching results..." : "Risk Level" }}
+            currentPrice={currentPrices[stockItem.ticker] || "--"}  // Pass current price as a prop
           />
         ))}
       </div>
