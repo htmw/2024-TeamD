@@ -25,8 +25,6 @@ from predictions.views import SignupView
 
 # Define the router
 router = routers.DefaultRouter()
-#router.register(r'stocks', views.StockView, basename='stock')
-#router.register(r'predict', views.predict_view, basename='predict')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -41,6 +39,8 @@ urlpatterns = [
     path('search/', views.display_prediction, name="search_results"),
     path('page_test/', views.page_test, name='page_test'),
     path('signup/', SignupView.as_view(), name='signup'),
+    path('api/current-price/<str:ticker>/', views.get_current_price, name='get_current_price'),
+    path('api/predict/', views.predict_view, name='predict_view'),
 ]
 
 # Serve media files during development

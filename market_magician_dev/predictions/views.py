@@ -58,6 +58,31 @@ def classify_prediction(risk, low_threshold, high_threshold):
     else:
         return "Medium"
 
+# Function to fetch current price using a financial API (e.g., Yahoo Finance)
+def fetch_current_price_from_api(ticker):
+    try:
+        stock = yf.Ticker(ticker)
+        data = stock.history(period="1d")
+        current_price = data['Close'].iloc[-1]  # Get the most recent closing price
+        return round(current_price, 2) 
+    except Exception as e:
+        return str(e)  # Return error message if API call fails
+
+# View to fetch current price (GET request)
+@api_view(['GET'])
+def get_current_price(request, ticker):
+    # Fetch the current price from the API function
+    current_price = fetch_current_price_from_api(ticker)
+    
+    if isinstance(current_price, str):
+        return Response({"error": current_price}, status=500)  # Error fetching price
+
+    if current_price is None:
+        return Response({"current_price": current_price})
+    
+    return Response({"current_price": current_price})
+
+# Predictive model view (POST request)
 @api_view(['POST'])
 def predict_view(request):
     ticker = request.data.get("ticker", "AAPL")
@@ -120,6 +145,7 @@ def predict_view(request):
         # Predict the stock price
         predicted_price = model.predict(X_latest)
         predicted_price = scaler.inverse_transform(predicted_price)[0, 0]
+        predicted_price = round(predicted_price, 2)  # Round predicted price to 2 decimal places
 
         # Calculate risk and classification
         risk = predicted_price
@@ -132,7 +158,8 @@ def predict_view(request):
             "predicted_risk": predicted_risk,
             "classification": predicted_risk,
             "low_threshold": low_threshold,
-            "high_threshold": high_threshold
+            "high_threshold": high_threshold,
+            "predicted_price": predicted_price 
         })
     else:
         # Model already trained, proceed with prediction logic
@@ -161,9 +188,9 @@ def predict_view(request):
             "predicted_risk": predicted_risk,
             "classification": predicted_risk,
             "low_threshold": low_threshold,
-            "high_threshold": high_threshold
+            "high_threshold": high_threshold,
+            "predicted_price": predicted_price  
         })
-
 
 def save_trained_model(ticker, model):
     # ensure the directory exists
