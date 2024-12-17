@@ -109,7 +109,7 @@ def make_prediction(ticker, model):
     # Predict the stock price
     predicted_price = model.predict(X_latest)
     predicted_price = scaler.inverse_transform(predicted_price)[0, 0]
-		predicted_price = round(predicted_price, 2)  # Round predicted price to 2 decimal places
+    predicted_price = round(predicted_price, 2)  # Round predicted price to 2 decimal places
     return df, predicted_price
 		
 # Function to fetch current price using a financial API (e.g., Yahoo Finance)
@@ -168,7 +168,7 @@ def predict_view(request):
         "classification": predicted_risk,
         "low_threshold": low_threshold,
         "high_threshold": high_threshold,
-				"predicted_price": predicted_price 
+	    "predicted_price": predicted_price 
     })
 
 
