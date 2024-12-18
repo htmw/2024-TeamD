@@ -1,79 +1,60 @@
-import React from 'react';
-import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentUser, selectCurrentUser } from '../components/userSlice';
-import {
-    Modal,
-    ModalHeader,
-    ModalBody,
-    FormGroup,
-    Label,
-    Button
-} from 'reactstrap';
-import defaultAvatar from '../assets/images/stocks.png';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import { validateUserLoginForm } from '../components/validateUserLoginForm';
+import React, { useState } from "react";
+import "../App.css";
 
+const Login = ({ setIsAuthenticated }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-const Login = () => {
-    const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const response = await fetch("http://localhost:8000/api/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
 
-    const currentUser = useSelector(selectCurrentUser);
+    if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem("auth_token", data.token);  // Store the token
+      setIsAuthenticated(true);  // Set authentication state to true
+    } else {
+      setErrorMessage("Invalid credentials. Please try again.");
+    }
+  };
 
-    const dispatch = useDispatch();
-
-    const handleLogin = (values) => {
-        const currentUser = {
-            id: Date.now(),
-            avatar: defaultAvatar,
-            username: values.username,
-            password: values.password
-        };
-        dispatch(setCurrentUser(currentUser));
-        setLoginModalOpen(false);
-    };
-
-    return (
-        <div className="login-form">
-            <h2>Login</h2>
-            <Formik
-                initialValues={{ username: '', password: '' }}
-                onSubmit={handleLogin}
-                validate={validateUserLoginForm}
-            >
-                <Form>
-                    <div className="form-group">
-                        <label htmlFor="username">Username</label>
-                        <Field
-                            id="username"
-                            name="username"
-                            placeholder="Username"
-                            className="form-control"
-                        />
-                        <ErrorMessage name="username">
-                            {(msg) => <p className="text-danger">{msg}</p>}
-                        </ErrorMessage>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <Field
-                            id="password"
-                            name="password"
-                            placeholder="Password"
-                            className="form-control"
-                            type="password"
-                        />
-                        <ErrorMessage name="password">
-                            {(msg) => <p className="text-danger">{msg}</p>}
-                        </ErrorMessage>
-                    </div>
-
-                    <button type="submit" className="btn btn-primary">Login</button>
-                </Form>
-            </Formik>
+  return (
+    <div className="login-container">
+      <form className="login-form" onSubmit={handleLogin}>
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
         </div>
-    );
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        <button type="submit" className="login-button">
+          Login
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default Login;

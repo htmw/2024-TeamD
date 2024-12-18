@@ -53,7 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",    
 ]
 
 ROOT_URLCONF = "market_magician.urls"
@@ -136,6 +136,13 @@ STATIC_URL = "static/"
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Allow frontend to communicate with backend
+]
+
+CORS_ALLOW_CREDENTIALS = True  # This allows sending cookies with requests
+
+# CSRF settings
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',  # Add the React frontend origin
 ]
 
 # Default primary key field type

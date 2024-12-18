@@ -1,0 +1,696 @@
+<html
+        xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<title>Sprint 3 (Jira)</title>
+<style type="text/css">
+table {
+    mso-displayed-decimal-separator:"\.";
+    mso-displayed-thousand-separator:"\,";
+}
+body
+{
+    margin: 0px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    color:black;
+}
+
+</style>
+<META HTTP-EQUIV="Content-Type" Content="application/vnd.ms-excel; charset=UTF-8">
+<!-- JRA-7598 - ensure fields (e.g. description) occupy only one cell - even fields containing newlines. -->
+<!--
+Vertical align all cells to the top, in order to align all issue rows of issuetable to the top,
+since Excel does not use or save the css files it is hardcoded here.
+-->
+<style>
+@page
+{
+mso-page-orientation:landscape;
+margin:.25in .25in .5in .25in;
+mso-header-margin:.5in;
+mso-footer-margin:.25in;
+mso-footer-data:"&R&P of &N";
+mso-horizontal-page-align:center;
+mso-vertical-page-align:center;
+}
+
+td.issuekey,
+td.issuetype,
+td.status {
+    mso-style-parent: "";
+    mso-number-format: \@;
+    text-align: left;
+}
+br
+{
+    mso-data-placement:same-cell;
+}
+
+td
+{
+    vertical-align: top;
+}
+</style>
+
+<!--[if gte mso 9]><xml>
+<x:ExcelWorkbook>
+<x:ExcelWorksheets>
+<x:ExcelWorksheet>
+<x:Name>general_report</x:Name>
+<x:WorksheetOptions>
+<x:Print>
+<x:ValidPrinterInfo/>
+</x:Print>
+</x:WorksheetOptions>
+</x:ExcelWorksheet>
+</x:ExcelWorksheets>
+</x:ExcelWorkbook>
+</xml><![endif]-->
+</head>
+<body>
+
+<table border="1">
+    <tr bgcolor="#205081" height="30">
+        <td colspan="9">
+            <img src="https://artificialasynchrony.atlassian.net/images/icon-jira-family-logo.png" width="57" height="30" border="0" alt="Sprint 3 (Jira)">
+        </td>
+    </tr>
+    <tr>
+        <td colspan="9">
+            <a href="https://artificialasynchrony.atlassian.net/issues/?filter=10034">Sprint 3 (Jira)</a>
+        </td>
+    </tr>
+    <tr>
+                <td colspan="9">
+            Displaying <strong>20</strong> issues at <strong>17/Dec/24 2:23 PM</strong>.
+        </td>
+    </tr>
+</table>
+
+
+
+
+                                        <table id="issuetable" class="aui " border="1" cellpadding="3" cellspacing="1" width="100%">
+                        <thead>
+        <tr class="rowHeader">
+            
+                                                            <th class="colHeaderLink headerrow-issuetype" data-id="issuetype">
+                                                        Issue Type
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-issuekey" data-id="issuekey">
+                                                        Key
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-summary" data-id="summary">
+                                                        Summary
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-assignee" data-id="assignee">
+                                                        Assignee
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-status" data-id="status">
+                                                        Status
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10016" data-id="customfield_10016">
+                                                        Story point estimate
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-description" data-id="description">
+                                                        Description
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10068" data-id="customfield_10068">
+                                                        Acceptance Criteria
+                                                    </th>
+                                                
+                                                            <th class="colHeaderLink headerrow-customfield_10107" data-id="customfield_10107">
+                                                        Work Done
+                                                    </th>
+                                                                    </tr>
+    </thead>
+    <tbody>
+                    
+
+                <tr id="issuerow10145" rel="10145" data-issuekey="MARKETMAG-92" class="issuerow">
+                                            <td class="issuetype">    Task
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-92" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-92">MARKETMAG-92</a>
+</td>
+                                            <td class="summary"><p>
+                Monte-Carlo simulation research
+    </p>
+</td>
+                                            <td class="assignee">            Abed Nael Mussawi
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-green jira-issue-status-lozenge-done aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Done&lt;/span&gt;">Done</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            Developer task capturing research done in order to support Andrew’s Monte-Carlo work 
+    </td>
+                                            <td class="customfield_10068">      Results from research shared with Andrew
+  </td>
+                                            <td class="customfield_10107">      After performing the necessary research, shared findings with Andrew through discord meetings.
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10118" rel="10118" data-issuekey="MARKETMAG-87" class="issuerow">
+                                            <td class="issuetype">    Task
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-87" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-87">MARKETMAG-87</a>
+</td>
+                                            <td class="summary"><p>
+                Add sign up functionality to sign up page back end
+    </p>
+</td>
+                                            <td class="assignee">            Abed Nael Mussawi
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-green jira-issue-status-lozenge-done aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Done&lt;/span&gt;">Done</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            Developer task to add code Django back end to process user registration and save to database.
+    </td>
+                                            <td class="customfield_10068">      # User must be prompted to create a username and password combination at signup page<br/>
+# Password must be the same to process the request<br/>
+# If conditions are met, username and password are stored as User objects in database
+  </td>
+                                            <td class="customfield_10107">      * Added API functions to front end signup page code to send username and password combinations to the back end. Password check function written here as well<br/>
+* Added new API functions to back end views to process signup data from front end. Created user registration serializers and updated backed url list.
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10143" rel="10143" data-issuekey="MARKETMAG-90" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-90" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-90">MARKETMAG-90</a>
+</td>
+                                            <td class="summary"><p>
+                Add historical price view function to price history page
+    </p>
+</td>
+                                            <td class="assignee">            Abed Nael Mussawi
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-blue-gray jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;To Do&lt;/span&gt;">To Do</span>    </td>
+                                            <td class="customfield_10016">    5
+</td>
+                                            <td class="description">            *As a/an* retail investor, *I Want to* to see historical price data of a selected stock over a range of time I can specify, *So that* I can see price performance in that time range
+    </td>
+                                            <td class="customfield_10068">      # User can select an option to see historical data for a stock<br/>
+# The application allows the user to select a range of time<br/>
+# Application displays a line graph of price history within the time range
+  </td>
+                                            <td class="customfield_10107"></td>
+                    </tr>
+
+
+                <tr id="issuerow10108" rel="10108" data-issuekey="MARKETMAG-77" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-77" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-77">MARKETMAG-77</a>
+</td>
+                                            <td class="summary"><p>
+                Save stock to watchlist
+    </p>
+</td>
+                                            <td class="assignee">            Abed Nael Mussawi
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-blue-gray jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;To Do&lt;/span&gt;">To Do</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            *As a* retail investor, *I Want* to save a stock to my watchlist in the watch list page, *So that* I can customize and easily track my personal stock interests
+    </td>
+                                            <td class="customfield_10068">      # When user enters a valid stock symbol in the watchlist page, it is added to the user’s watchlist table.
+  </td>
+                                            <td class="customfield_10107"></td>
+                    </tr>
+
+
+                <tr id="issuerow10076" rel="10076" data-issuekey="MARKETMAG-45" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-45" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-45">MARKETMAG-45</a>
+</td>
+                                            <td class="summary"><p>
+                Select the time window to train a stock model
+    </p>
+</td>
+                                            <td class="assignee">            Andrew Rowan
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-yellow jira-issue-status-lozenge-indeterminate aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;In Progress&lt;/span&gt;">In Progress</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            *As a/an* retail investor, *I Want to* Select the time window to train a stock model, *So that* I can tailor the price predictions to my personal preferences
+    </td>
+                                            <td class="customfield_10068">      # Users can select a time range via slider bar or date range to train a stock model<br/>
+# The application displays the settings were saved for the model they are trying to train
+  </td>
+                                            <td class="customfield_10107">      Updated back end training functions to accept time window arguments (Year, Month, Day). <br/>
+<br/>
+Next steps:<br/>
+<br/>
+# Add API functions <br/>
+## to process user time window inputs
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10111" rel="10111" data-issuekey="MARKETMAG-80" class="issuerow">
+                                            <td class="issuetype">    Task
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-80" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-80">MARKETMAG-80</a>
+</td>
+                                            <td class="summary"><p>
+                Integrate Monte-Carlo Simulation 
+    </p>
+</td>
+                                            <td class="assignee">            Andrew Rowan
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-yellow jira-issue-status-lozenge-indeterminate aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;In Progress&lt;/span&gt;">In Progress</span>    </td>
+                                            <td class="customfield_10016">    5
+</td>
+                                            <td class="description">            Implement a Monte-Carlo simulation to improve predictive capabilities
+    </td>
+                                            <td class="customfield_10068">      # When a user requests a prediction, the monte carlo simulation will produce a likely outcome percentage<br/>
+# When a user requests a prediction, the simulated prices will be displayed 
+  </td>
+                                            <td class="customfield_10107">      Monte-Carlo code written and tested using google’s Colab Jupyter notebook.<br/>
+<br/>
+Next steps:<br/>
+<br/>
+# Add Monte-Carlo function to Django back end<br/>
+# Create API functions<br/>
+## To process front end request to call Monte-Carlo Function<br/>
+## To send back results to front end
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10112" rel="10112" data-issuekey="MARKETMAG-81" class="issuerow">
+                                            <td class="issuetype">    Task
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-81" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-81">MARKETMAG-81</a>
+</td>
+                                            <td class="summary"><p>
+                Research traditional investment and trading strategies and implement for comparison 
+    </p>
+</td>
+                                            <td class="assignee">            Andrew Rowan
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-blue-gray jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;To Do&lt;/span&gt;">To Do</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            Research traditional trading strategies, implement them and compare their predictive powers to our trained prediction
+    </td>
+                                            <td class="customfield_10068">      # When a user requests a prediction, the traditional strategy will have a price prediction  displayed<br/>
+# When a user gets their prediction, they are able to compare the model’s prediction to the traditional strategy
+  </td>
+                                            <td class="customfield_10107"></td>
+                    </tr>
+
+
+                <tr id="issuerow10110" rel="10110" data-issuekey="MARKETMAG-79" class="issuerow">
+                                            <td class="issuetype">    Task
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-79" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-79">MARKETMAG-79</a>
+</td>
+                                            <td class="summary"><p>
+                Create Attention Function for model Training
+    </p>
+</td>
+                                            <td class="assignee">            Andrew Rowan
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-blue-gray jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;To Do&lt;/span&gt;">To Do</span>    </td>
+                                            <td class="customfield_10016">    5
+</td>
+                                            <td class="description">            Update the LSTM model to include an attention function that improves prediction quality
+    </td>
+                                            <td class="customfield_10068">      # When a user makes a prediction, the loss and mean squared error are significantly less
+  </td>
+                                            <td class="customfield_10107"></td>
+                    </tr>
+
+
+                <tr id="issuerow10092" rel="10092" data-issuekey="MARKETMAG-61" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-61" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-61">MARKETMAG-61</a>
+</td>
+                                            <td class="summary"><p>
+                Create watch list page
+    </p>
+</td>
+                                            <td class="assignee">            Henry Kim
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-yellow jira-issue-status-lozenge-indeterminate aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;In Progress&lt;/span&gt;">In Progress</span>    </td>
+                                            <td class="customfield_10016">    2
+</td>
+                                            <td class="description">            *As a* retail investor, *I Want* a webpage where I can add stock tickers to a watchlist, *So that* I can easily track my personal stock interests
+    </td>
+                                            <td class="customfield_10068">      # Users can navigate to a watchlist page when clicking on the watchlist link on the home page<br/>
+# Users can navigate back to the home page when clicking on the home page link on the watchlist page
+  </td>
+                                            <td class="customfield_10107">      Started creating new page in React front end to display watchlist. Realized there was a dependency on the login features as the watchlist objects used user objects as the primary key.<br/>
+<br/>
+Next steps:<br/>
+<br/>
+# Finish front end API function.<br/>
+# Add CSS for webpage format
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10119" rel="10119" data-issuekey="MARKETMAG-88" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-88" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-88">MARKETMAG-88</a>
+</td>
+                                            <td class="summary"><p>
+                Remove stock to watchlist
+    </p>
+</td>
+                                            <td class="assignee">            Henry Kim
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-blue-gray jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;To Do&lt;/span&gt;">To Do</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            *As a* retail investor, *I Want* to save a stock to my watchlist in the watch list page, *So that* I can customize and easily track my personal stock interests
+    </td>
+                                            <td class="customfield_10068">      # When user enters a valid stock symbol in the watchlist page, it is added to the user’s watchlist table.
+  </td>
+                                            <td class="customfield_10107"></td>
+                    </tr>
+
+
+                <tr id="issuerow10114" rel="10114" data-issuekey="MARKETMAG-83" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-83" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-83">MARKETMAG-83</a>
+</td>
+                                            <td class="summary"><p>
+                View watchlist contents
+    </p>
+</td>
+                                            <td class="assignee">            Henry Kim
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-blue-gray jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;To Do&lt;/span&gt;">To Do</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            *As a* retail investor, *I Want* to see the contents of my watchlist in the watch list page, *So that* I can review which stocks are in my list
+    </td>
+                                            <td class="customfield_10068">      # When user clicks a view watchlist button, a table is presented to the user.
+  </td>
+                                            <td class="customfield_10107"></td>
+                    </tr>
+
+
+                <tr id="issuerow10079" rel="10079" data-issuekey="MARKETMAG-48" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-48" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-48">MARKETMAG-48</a>
+</td>
+                                            <td class="summary"><p>
+                Sort stock watchlist
+    </p>
+</td>
+                                            <td class="assignee">            Henry Kim
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-blue-gray jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;To Do&lt;/span&gt;">To Do</span>    </td>
+                                            <td class="customfield_10016">    1
+</td>
+                                            <td class="description">            *As a/an* retail investor, *I Want to* quickly sort and search through my watchlist based on price, trend, name, etc., *So that* I can easily see which stocks have been performing well/poorly quickly
+    </td>
+                                            <td class="customfield_10068">      User can sort through their watchlist based on options provided by the application (such as current price, name, confidence)
+  </td>
+                                            <td class="customfield_10107"></td>
+                    </tr>
+
+
+                <tr id="issuerow10116" rel="10116" data-issuekey="MARKETMAG-85" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-85" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-85">MARKETMAG-85</a>
+</td>
+                                            <td class="summary"><p>
+                Get current price for preset stock on the stocks page
+    </p>
+</td>
+                                            <td class="assignee">            Jonathan Sanchez
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-green jira-issue-status-lozenge-done aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Done&lt;/span&gt;">Done</span>    </td>
+                                            <td class="customfield_10016">    2
+</td>
+                                            <td class="description">            *As a/an* retail investor, *I Want to* see the most recent price for a preset stock on the stocks page, *So That* I can compare it with the model’s predictions
+    </td>
+                                            <td class="customfield_10068">      # In the stocks page, when a user clicks one of the displayed stocks, the application will show the current stock price
+  </td>
+                                            <td class="customfield_10107">      # Created a function that sends the data from the backend to the frontend<br/>
+# Added necessary code in the frontend to fetch API data with from the backend and make sure it was rounded to the 2nd decimal
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10115" rel="10115" data-issuekey="MARKETMAG-84" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-84" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-84">MARKETMAG-84</a>
+</td>
+                                            <td class="summary"><p>
+                Get price prediction for preset stock on the stocks page
+    </p>
+</td>
+                                            <td class="assignee">            Jonathan Sanchez
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-green jira-issue-status-lozenge-done aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Done&lt;/span&gt;">Done</span>    </td>
+                                            <td class="customfield_10016">    1
+</td>
+                                            <td class="description">            *As a/an* retail investor, *I Want to* get a price prediction from a preset stock on the stocks page, *So That* I can decide if I wish to buy, sell, or hold that stock
+    </td>
+                                            <td class="customfield_10068">      # In the stocks page, when a user clicks one of the displayed stocks, the application will present a price prediction
+  </td>
+                                            <td class="customfield_10107">      # Added the returns of predicted_price and set the predicted_price data to a function in the backend that communicates with the front end and gets the prediction<br/>
+# Added the necessary code in the frontend to fetch the predicted price and round to the 2nd decimal
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10107" rel="10107" data-issuekey="MARKETMAG-76" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-76" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-76">MARKETMAG-76</a>
+</td>
+                                            <td class="summary"><p>
+                Add log out function Front End
+    </p>
+</td>
+                                            <td class="assignee">            Jonathan Sanchez
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-green jira-issue-status-lozenge-done aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Done&lt;/span&gt;">Done</span>    </td>
+                                            <td class="customfield_10016">    2
+</td>
+                                            <td class="description">            *As a/an* app user, *I Want to* log out from my account, *So that* other people can’t access my account 
+    </td>
+                                            <td class="customfield_10068">      # When user clicks on the logout button, the application logs the user off<br/>
+# When logged off, user will be redirected back to homepage<br/>
+# Added functionality to communicate with the backend using API request
+  </td>
+                                            <td class="customfield_10107">      # Added logout button and function to site navigation bar.<br/>
+# Gave it privileged status so only authenticated users can view it<br/>
+# Redirects users to homepage after hitting logout button
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10120" rel="10120" data-issuekey="MARKETMAG-89" class="issuerow">
+                                            <td class="issuetype">    Task
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-89" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-89">MARKETMAG-89</a>
+</td>
+                                            <td class="summary"><p>
+                Add login functionality to homepage
+    </p>
+</td>
+                                            <td class="assignee">            Jonathan Sanchez
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-green jira-issue-status-lozenge-done aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Done&lt;/span&gt;">Done</span>    </td>
+                                            <td class="customfield_10016">    2
+</td>
+                                            <td class="description">            Developer task to add code to Django back end that processes user login request
+    </td>
+                                            <td class="customfield_10068">      When a user enters valid username and password combination at login screen, back end server provides an authentication token to give user privileges
+  </td>
+                                            <td class="customfield_10107">      # Added API functions to login source code that sends username and password to back end server.<br/>
+# Back end server checks if user name exists and is the correct password. If so, an authentication token is sent back to front end.<br/>
+# Added privileged status to the stocks and search pages so that only authenticated users can view them
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10117" rel="10117" data-issuekey="MARKETMAG-86" class="issuerow">
+                                            <td class="issuetype">    Task
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-86" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-86">MARKETMAG-86</a>
+</td>
+                                            <td class="summary"><p>
+                Add log out function Back End
+    </p>
+</td>
+                                            <td class="assignee">            Jonathan Sanchez
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-green jira-issue-status-lozenge-done aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Done&lt;/span&gt;">Done</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            Add back API code to respond to front end log out story.
+    </td>
+                                            <td class="customfield_10068">      # When user clicks on the logout button, the application logs the user off<br/>
+# When logged off, user will be redirected back to homepage<br/>
+# Added functionality to communicate with the frontend using API request
+  </td>
+                                            <td class="customfield_10107">      # Created a logout function on the backend which communicates with the front end and logs out the user.
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10144" rel="10144" data-issuekey="MARKETMAG-91" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-91" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-91">MARKETMAG-91</a>
+</td>
+                                            <td class="summary"><p>
+                Create CSS for website
+    </p>
+</td>
+                                            <td class="assignee">            Kassandra Camarillo
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-green jira-issue-status-lozenge-done aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Done&lt;/span&gt;">Done</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            *As a/an* general user, *I Want* a website that is aesthetically pleasing and easy to use , *so that* I can enjoy the user experience
+    </td>
+                                            <td class="customfield_10068"></td>
+                                            <td class="customfield_10107">      I created CSS to allow users to navigate between pages quickly and efficiently. 
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10078" rel="10078" data-issuekey="MARKETMAG-47" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-47" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-47">MARKETMAG-47</a>
+</td>
+                                            <td class="summary"><p>
+                Create user account/profile
+    </p>
+</td>
+                                            <td class="assignee">            Kassandra Camarillo
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-green jira-issue-status-lozenge-done aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Done&lt;/span&gt;">Done</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            *As a/an* new user, *I Want to* create a user account with my own login name and password, *So that* I can securely log into the application
+    </td>
+                                            <td class="customfield_10068">      # When a user at the sign up page enters a unique account name and secure password in the account creation form, the application displays confirmation of account creation.<br/>
+# If and error occurs (name is not unique or password does not meet security minimums) display error to the user and ask to try again
+  </td>
+                                            <td class="customfield_10107">      In the user signup and pages, added code that sets minimum requirements for username length and password length.
+  </td>
+                    </tr>
+
+
+                <tr id="issuerow10073" rel="10073" data-issuekey="MARKETMAG-42" class="issuerow">
+                                            <td class="issuetype">    Story
+</td>
+                                            <td class="issuekey">
+
+    <a class="issue-link" data-issue-key="MARKETMAG-42" href="https://artificialasynchrony.atlassian.net/browse/MARKETMAG-42">MARKETMAG-42</a>
+</td>
+                                            <td class="summary"><p>
+                Create price history page
+    </p>
+</td>
+                                            <td class="assignee">            Kassandra Camarillo
+    </td>
+                                            <td class="status">
+                <span class=" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-blue-gray jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium" data-tooltip="&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;To Do&lt;/span&gt;">To Do</span>    </td>
+                                            <td class="customfield_10016">    3
+</td>
+                                            <td class="description">            *As a/an* retail investor, *I Want* a page where I can view historical price data of a selected stock *So that* I can compare price prediction to past performance
+    </td>
+                                            <td class="customfield_10068">      # When the user clicks on the price history link the browser should navigate to the price history page<br/>
+# When the user clicks on the homepage link, the browser should navigate to the home page
+  </td>
+                                            <td class="customfield_10107"></td>
+                    </tr>
+        </tbody>
+    </table>
+    <div class="end-of-stable-message"></div>
+            <table border="1" >
+<tr>
+    <td bgcolor="#dddddd" colspan="9"><font size="1">
+        Generated at Tue Dec 17 19:23:03 GMT 2024 by Henry Kim using Jira 1001.0.0-SNAPSHOT#100277-rev:0d958f9c190b54adbfe3947d6a2fbc16b2d1aa6f.
+    </font></td>
+</tr>
+</table>
+
+</body>
+</html>

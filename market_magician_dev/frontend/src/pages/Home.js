@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import homeImage from '../assets/images/mag7stocks.jpg';
+
 
 function Home() {
     return (
         <main className="main-content">
             <section className="intro">
+                <img src={homeImage} alt="Magnificent 7" />
                 <h1>Maginficent Seven Stocks</h1>
                 <p>The Magnificent Seven are a group of seven of the most influential companies in the U.S. stock market:</p>
                 <p><strong>Alphabet</strong>: The parent company of Google</p>

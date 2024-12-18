@@ -4,13 +4,14 @@ from django.template import loader
 
 from django.views.generic import ListView
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
 from django.conf import settings 
 from django.db.models import Q
 
-from .serializers import StockSerializer
+from .serializers import StockSerializer, UserRegistrationSerializer
 from .models import Stock, Watchlist, TrainedModel
 
 import os
@@ -31,16 +32,23 @@ from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential, load_model
 from keras.layers import LSTM, Dense
 
-from rest_framework import status
+from rest_framework import status, generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import logout
+from django.contrib.auth.models import User
+from rest_framework.serializers import ValidationError
+
 
 # landing page
 def index(request):
     return render(request, 'index.html')
 
-
+# helper functions
 def classify_prediction(risk, low_threshold, high_threshold):
     if risk < low_threshold:
         return "Low"
@@ -49,6 +57,86 @@ def classify_prediction(risk, low_threshold, high_threshold):
     else:
         return "Medium"
 
+def train_model(ticker):
+    start_year = 2010
+    start_month = 1
+    start_day = 1
+    start = dt.date(start_year, start_month, start_day)
+    now = dt.datetime.now()
+
+    df = yf.download(ticker, start, now)
+    df.ffill(inplace=True)
+
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    df_scaled = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
+
+    X, y = [], []
+    for i in range(90, len(df_scaled)):
+        X.append(df_scaled[i-90:i, 0])
+        y.append(df_scaled[i, 0])
+
+    train_size = int(len(X) * 0.8)
+    test_size = len(X) - train_size
+
+    X_train, X_test = X[:train_size], X[test_size:]
+    y_train, y_test = y[:train_size], y[test_size:]
+
+    X_train, y_train = np.array(X_train), np.array(y_train)
+    X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+
+    # Create and train the model
+    model = Sequential()
+    model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
+    model.add(LSTM(units=50, return_sequences=True))
+    model.add(LSTM(units=50, return_sequences=False))
+    model.add(Dense(1))
+    model.compile(optimizer='adam', loss='mean_squared_error')
+
+    model.fit(X_train, y_train, epochs=50, batch_size=25, validation_split=0.2)
+    return model
+
+def make_prediction(ticker, model):
+    df = yf.download(ticker, period="3mo", interval="1d")
+
+    if df.empty:
+        return df, None
+
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaled_data = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
+    X_latest = np.array([scaled_data[-60:].reshape(60, 1)])
+    X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
+
+    # Predict the stock price
+    predicted_price = model.predict(X_latest)
+    predicted_price = scaler.inverse_transform(predicted_price)[0, 0]
+    predicted_price = round(predicted_price, 2)  # Round predicted price to 2 decimal places
+    return df, predicted_price
+		
+# Function to fetch current price using a financial API (e.g., Yahoo Finance)
+def fetch_current_price_from_api(ticker):
+    try:
+        stock = yf.Ticker(ticker)
+        data = stock.history(period="1d")
+        current_price = data['Close'].iloc[-1]  # Get the most recent closing price
+        return round(current_price, 2) 
+    except Exception as e:
+        return str(e)  # Return error message if API call fails
+
+# View to fetch current price (GET request)
+@api_view(['GET'])
+def get_current_price(request, ticker):
+    # Fetch the current price from the API function
+    current_price = fetch_current_price_from_api(ticker)
+    
+    if isinstance(current_price, str):
+        return Response({"error": current_price}, status=500)  # Error fetching price
+
+    if current_price is None:
+        return Response({"current_price": current_price})
+    
+    return Response({"current_price": current_price})
+
+# Predictive model view (POST request)		
 @api_view(['POST'])
 def predict_view(request):
     ticker = request.data.get("ticker", "AAPL")
@@ -58,102 +146,30 @@ def predict_view(request):
 
     if model is None:
         # If the model is not trained, train it
-        start_year = 2010
-        start_month = 1
-        start_day = 1
-        start = dt.date(start_year, start_month, start_day)
-        now = dt.datetime.now()
-
-        df = yf.download(ticker, start, now)
-        df.ffill(inplace=True)
-
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        df_scaled = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
-
-        X, y = [], []
-        for i in range(90, len(df_scaled)):
-            X.append(df_scaled[i-90:i, 0])
-            y.append(df_scaled[i, 0])
-
-        train_size = int(len(X) * 0.8)
-        test_size = len(X) - train_size
-
-        X_train, X_test = X[:train_size], X[test_size:]
-        y_train, y_test = y[:train_size], y[test_size:]
-
-        X_train, y_train = np.array(X_train), np.array(y_train)
-        X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
-
-        # Create and train the model
-        model = Sequential()
-        model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
-        model.add(LSTM(units=50, return_sequences=True))
-        model.add(LSTM(units=50, return_sequences=False))
-        model.add(Dense(1))
-        model.compile(optimizer='adam', loss='mean_squared_error')
-
-        model.fit(X_train, y_train, epochs=50, batch_size=25, validation_split=0.2)
+        model = train_model(ticker)
 
         # Save the trained model
         save_trained_model(ticker, model)
 
-        # After model is trained (or loaded), use it to predict the next stock prices
-        df = yf.download(ticker, period="3mo", interval="1d")
+    # After model is trained (or loaded), use it to predict the next stock prices
+    df, predicted_price = make_prediction(ticker, model)
 
-        if df.empty:
-            return Response({"error": f"Data not available for {ticker}."}, status=404)
+    if df.empty:
+        return Response({"error": f"Data not available for {ticker}."}, status=404)
+    
+    # Calculate risk and classification
+    low_threshold = np.percentile(df['Close'], 33)
+    high_threshold = np.percentile(df['Close'], 66)
+    predicted_risk = classify_prediction(predicted_price, low_threshold, high_threshold)
 
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled_data = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
-        X_latest = np.array([scaled_data[-60:].reshape(60, 1)])
-        X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
-
-        # Predict the stock price
-        predicted_price = model.predict(X_latest)
-        predicted_price = scaler.inverse_transform(predicted_price)[0, 0]
-
-        # Calculate risk and classification
-        risk = predicted_price
-        low_threshold = np.percentile(df['Close'], 33)
-        high_threshold = np.percentile(df['Close'], 66)
-        predicted_risk = classify_prediction(risk, low_threshold, high_threshold)
-
-        return Response({
-            "ticker": ticker,
-            "predicted_risk": predicted_risk,
-            "classification": predicted_risk,
-            "low_threshold": low_threshold,
-            "high_threshold": high_threshold
-        })
-    else:
-        # Model already trained, proceed with prediction logic
-        df = yf.download(ticker, period="3mo", interval="1d")
-
-        if df.empty:
-            return Response({"error": f"Data not available for {ticker}."}, status=404)
-
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled_data = scaler.fit_transform(df['Close'].values.reshape(-1, 1))
-        X_latest = np.array([scaled_data[-60:].reshape(60, 1)])
-        X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
-
-        # Predict the stock price
-        predicted_price = model.predict(X_latest)
-        predicted_price = scaler.inverse_transform(predicted_price)[0, 0]
-
-        # Calculate risk and classification
-        risk = predicted_price
-        low_threshold = np.percentile(df['Close'], 33)
-        high_threshold = np.percentile(df['Close'], 66)
-        predicted_risk = classify_prediction(risk, low_threshold, high_threshold)
-
-        return Response({
-            "ticker": ticker,
-            "predicted_risk": predicted_risk,
-            "classification": predicted_risk,
-            "low_threshold": low_threshold,
-            "high_threshold": high_threshold
-        })
+    return Response({
+        "ticker": ticker,
+        "predicted_risk": predicted_risk,
+        "classification": predicted_risk,
+        "low_threshold": low_threshold,
+        "high_threshold": high_threshold,
+	    "predicted_price": predicted_price 
+    })
 
 
 def save_trained_model(ticker, model):
@@ -187,34 +203,90 @@ def load_trained_model(ticker):
     except (Stock.DoesNotExist, TrainedModel.DoesNotExist, Exception) as e:
         return None
 
-@login_required
-def add_to_watchlist(request):
-    if request.method == "POST":
-        ticker = request.POST.get("ticker").upper()
-        # Validate the ticker symbol here need to add API to Yfiniance to check if the ticker is valid other option is to use a list with predefined 
-        # tickers this will make the list static and not dynamic like the API approach
-        stock, created = Stock.objects.get_or_create(ticker=ticker)
-        if created:
-            # Fetch and save additional stock data if needed
-            stock.company_name = "Company Name Placeholder"
-            stock.sector = "Sector Placeholder"
-            stock.save()
-        # Add the stock to the user's watchlist
-        watchlist_entry, created = Watchlist.objects.get_or_create(user=request.user, stock=stock)
-        if created:
-            messages.success(request, f"{stock.ticker} has been added to your watchlist.")
-        else:
-            messages.info(request, f"{stock.ticker} is already in your watchlist.")
-        return redirect("view_watchlist")
-    else:
-        return render(request, "add_stock.html")
+# @login_required
+# def add_to_watchlist(request):
+    # if request.method == "POST":
+        # ticker = request.POST.get("ticker").upper()
+        # # Validate the ticker symbol here need to add API to Yfiniance to check if the ticker is valid other option is to use a list with predefined 
+        # # tickers this will make the list static and not dynamic like the API approach
+        # stock, created = Stock.objects.get_or_create(ticker=ticker)
+        # if created:
+            # # Fetch and save additional stock data if needed
+            # stock.company_name = "Company Name Placeholder"
+            # stock.sector = "Sector Placeholder"
+            # stock.save()
+        # # Add the stock to the user's watchlist
+        # watchlist_entry, created = Watchlist.objects.get_or_create(user=request.user, stock=stock)
+        # if created:
+            # messages.success(request, f"{stock.ticker} has been added to your watchlist.")
+        # else:
+            # messages.info(request, f"{stock.ticker} is already in your watchlist.")
+        # return redirect("view_watchlist")
+    # else:
+        # return render(request, "add_stock.html")
     
 
-@login_required
-def view_watchlist(request):
-    watchlist_entries = Watchlist.objects.filter(user=request.user).select_related("stock")
-    return render(request, "watchlist.html", {"watchlist_entries": watchlist_entries})
+# @login_required
+# def view_watchlist(request):
+    # watchlist_entries = Watchlist.objects.filter(user=request.user).select_related("stock")
+    # return render(request, "watchlist.html", {"watchlist_entries": watchlist_entries})
 		
+
+class SignupView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        email = request.data.get("email")
+
+        if not username or not password or not email:
+            return Response({"error": "Username, password, and email are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the username already exists
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new user
+        user = User.objects.create_user(username=username, password=password, email=email)
+        
+        # Automatically log the user in after successful registration
+        login(request, user)
+
+        return Response({"message": "Signup successful"}, status=status.HTTP_201_CREATED)
+
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        
+        user = authenticate(username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        logout(request)
+        return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
+    
+class AddToWatchlistView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        # logic for adding to the watchlist
+        return Response({"message": "Added to watchlist"}, status=200)
+
+class ViewWatchlistView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        # Logic for viewing the watchlist
+        return Response({"message": "Your watchlist"}, status=200)
+
 
 class StockView(APIView):
     def get(self, request):
@@ -242,9 +314,24 @@ class StockView(APIView):
         # Process the data (e.g., save to database, send email, etc.)
         return Response({"message": "Data received successfully"}, status=status.HTTP_200_OK)
 
-# class StockView(viewsets.ModelViewSet):
-#     serializer_class = StockSerializer
-#     queryset = Stock.objects.all()
+class UserRegistrationView(generics.CreateAPIView):
+    serializer_class = UserRegistrationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(
+                {
+                    "message": "User created successfully.",
+                    "user": {
+                        "username": user.username,
+                    }
+                },
+                status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # get stock, potentially a non hardcoded way to train stock
@@ -253,104 +340,109 @@ def display_prediction(request):
 
     #Choose the start year, month, and day to begin collecting data from.
     #This directly affects the amount of data the AI can potentially train on
-    start_year = 2010
-    start_month = 1
-    start_day = 1
+    start_year = request.GET.get('start_year', '2010').astype('float')
+    start_month = request.GET.get('start_month','1').astype('float')
+    start_day = request.GET.get('start_day','1').astype('float')
     start = dt.date(start_year, start_month, start_day)
     now = dt.datetime.now()
 
-    df = yf.download(stock, start, now)
+    # Checking if Model exists
+    model = load_trained_model(stock)
 
-    #preprocess data
-    df.isnull().sum()
-    df.ffill(inplace=True) 
+    if model is None:
 
-    #Looks at only Close for predictions
-    scaler = MinMaxScaler(feature_range=(0,1))
-    df_scaled = scaler.fit_transform(df['Close'].values.reshape(-1,1))
-    
-    #Chooses sequence length. For now we will use 90 days
-    X = []
-    y = []
+        df = yf.download(stock, start, now)
 
-    for i in range(90, len(df_scaled)):
-        X.append(df_scaled[i-90:i, 0])
-        y.append(df_scaled[i, 0])
+        #preprocess data
+        df.isnull().sum()
+        df.ffill(inplace=True) 
 
-    #splittiing the data into training and test sets
-    train_size = int(len(X) * 0.8)
-    test_size = len(X) - train_size
-
-    X_train, X_test = X[:train_size], X[test_size:]
-    y_train, y_test = y[:train_size], y[test_size:]
-
-    X_train, y_train = np.array(X_train), np.array(y_train)
-    X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
-        
-
-    #creating the model
-    model = Sequential()
-
-    # Adding LSTM layers
-    model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
-    model.add(LSTM(units=50, return_sequences=True))
-    model.add(LSTM(units=50, return_sequences=False))  # Only the last time step
-
-    # Adding a Dense layer to match the output shape with y_train
-    model.add(Dense(1))
-
-    # Compiling the model
-    model.compile(optimizer='adam', loss='mean_squared_error')
-
-    # Training the model
-    history = model.fit(X_train, y_train, epochs=50, batch_size=25, validation_split=0.2)
-    
-    # Convert X_test and y_test to Numpy arrays if they are not already
-    X_test = np.array(X_test)
-    y_test = np.array(y_test)
-
-    # Ensure X_test is reshaped similarly to how X_train was reshaped
-    # This depends on how you preprocessed the training data
-    X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
-
-    # Now evaluate the model on the test data
-    test_loss = model.evaluate(X_test, y_test)
-    # print("Test Loss: ", test_loss)
-    # Making predictions
-    y_pred = model.predict(X_test)
-
-    # Calculating MAE and RMSE
-    mae = mean_absolute_error(y_test, y_pred)
-    rmse = mean_squared_error(y_test, y_pred, squared=False)
-
-    # Fetching the latest 90 days of a stock's data
-    data = yf.download(stock, period='3mo', interval='1d')
-
-    # Selecting the 'Close' price and converting to numpy array
-    if data.empty:
-        pass
-    # print(f"Error: Could not fetch data for {stock}. Check the stock symbol.")
-    else:
-        closing_prices = data['Close'].values
-        # Scaling the data
+        #Looks at only Close for predictions
         scaler = MinMaxScaler(feature_range=(0,1))
-        scaled_data = scaler.fit_transform(closing_prices.reshape(-1,1))
+        df_scaled = scaler.fit_transform(df['Close'].values.reshape(-1,1))
+        
+        #Chooses sequence length. For now we will use 90 days
+        X = []
+        y = []
 
-        #length of Data so we can dynamically call for the data
-        data_len = len(scaled_data)
+        for i in range(90, len(df_scaled)):
+            X.append(df_scaled[i-90:i, 0])
+            y.append(df_scaled[i, 0])
 
-        # Since we need the last 60 days to predict the next day, we reshape the data accordingly
-        X_latest = np.array([scaled_data[-data_len:].reshape(data_len)])
+        #splittiing the data into training and test sets
+        train_size = int(len(X) * 0.8)
+        test_size = len(X) - train_size
 
-        # Reshaping the data for the model (adding batch dimension)
-        X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
+        X_train, X_test = X[:train_size], X[test_size:]
+        y_train, y_test = y[:train_size], y[test_size:]
 
-        # Making predictions for the next 4 candles
-        predicted_stock_price = model.predict(X_latest)
-        predicted_stock_price = scaler.inverse_transform(predicted_stock_price)
+        X_train, y_train = np.array(X_train), np.array(y_train)
+        X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
+            
 
-        scaler_for_prediction = MinMaxScaler(feature_range=(0, 1))
-        scaler_for_prediction.fit(closing_prices.reshape(-1, 1))  # Fit to original closing prices
+        #creating the model
+        model = Sequential()
+
+        # Adding LSTM layers
+        model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
+        model.add(LSTM(units=50, return_sequences=True))
+        model.add(LSTM(units=50, return_sequences=False))  # Only the last time step
+
+        # Adding a Dense layer to match the output shape with y_train
+        model.add(Dense(1))
+
+        # Compiling the model
+        model.compile(optimizer='adam', loss='mean_squared_error')
+
+        # Training the model
+        history = model.fit(X_train, y_train, epochs=50, batch_size=25, validation_split=0.2)
+        
+        # Convert X_test and y_test to Numpy arrays if they are not already
+        X_test = np.array(X_test)
+        y_test = np.array(y_test)
+
+        # Ensure X_test is reshaped similarly to how X_train was reshaped
+        # This depends on how you preprocessed the training data
+        X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+
+        # Now evaluate the model on the test data
+        test_loss = model.evaluate(X_test, y_test)
+        # print("Test Loss: ", test_loss)
+        # Making predictions
+        y_pred = model.predict(X_test)
+
+        # Calculating MAE and RMSE
+        mae = mean_absolute_error(y_test, y_pred)
+        rmse = mean_squared_error(y_test, y_pred, squared=False)
+
+        # Fetching the latest 90 days of a stock's data
+        data = yf.download(stock, period='3mo', interval='1d')
+
+        # Selecting the 'Close' price and converting to numpy array
+        if data.empty:
+            pass
+        # print(f"Error: Could not fetch data for {stock}. Check the stock symbol.")
+        else:
+            closing_prices = data['Close'].values
+            # Scaling the data
+            scaler = MinMaxScaler(feature_range=(0,1))
+            scaled_data = scaler.fit_transform(closing_prices.reshape(-1,1))
+
+            #length of Data so we can dynamically call for the data
+            data_len = len(scaled_data)
+
+            # Since we need the last 60 days to predict the next day, we reshape the data accordingly
+            X_latest = np.array([scaled_data[-data_len:].reshape(data_len)])
+
+            # Reshaping the data for the model (adding batch dimension)
+            X_latest = np.reshape(X_latest, (X_latest.shape[0], X_latest.shape[1], 1))
+
+            # Making predictions for the next 4 candles
+            predicted_stock_price = model.predict(X_latest)
+            predicted_stock_price = scaler.inverse_transform(predicted_stock_price)
+
+            scaler_for_prediction = MinMaxScaler(feature_range=(0, 1))
+            scaler_for_prediction.fit(closing_prices.reshape(-1, 1))  # Fit to original closing prices
 
 
     # Predict the next 30 days iteratively

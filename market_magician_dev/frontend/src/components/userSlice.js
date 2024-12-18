@@ -1,27 +1,29 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-// Initial state
 const initialState = {
-    currentUser: null
+  currentUser: null,
+  isLoggedIn: false,
 };
 
-// Create slice
 const userSlice = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {
-        // Reducer to set the current user
-        setCurrentUser: (state, action) => {
-            state.currentUser = action.payload;  // No need for spread operator with immer (default with Redux Toolkit)
-        }
-    }
+  name: "user",
+  initialState,
+  reducers: {
+    setCurrentUser: (state, action) => {
+      state.currentUser = action.payload;
+      state.isLoggedIn = true;
+    },
+    logoutUser: (state) => {
+      state.currentUser = null;
+      state.isLoggedIn = false;
+    },
+  },
 });
 
-// Export actions
-export const { setCurrentUser } = userSlice.actions;
+export const { setCurrentUser, logoutUser } = userSlice.actions;
 
-// Export the selector for accessing currentUser from the store
+// Selector for logged-in status
 export const selectCurrentUser = (state) => state.user.currentUser;
+export const selectLoggedIn = (state) => state.user.isLoggedIn;
 
-// Export the reducer
 export default userSlice.reducer;
