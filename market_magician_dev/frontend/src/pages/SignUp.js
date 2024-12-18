@@ -8,45 +8,39 @@ const Signup = ({ setIsAuthenticated }) => {
     
     const validateSignUpForm = (values) => {
         const errors = {};
-        
+    
         if (!values.username) {
             errors.username = "Required";
         }
-        
-        if (!values.email) {
-            errors.email = "Required";
-        } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-            errors.email = "Invalid email address";
-        }
-        
+    
         if (!values.password) {
             errors.password = "Required";
         }
-        
-        if (!values.confirmPassword) {
-            errors.confirmPassword = "Required";
-        } else if (values.password !== values.confirmPassword) {
-            errors.confirmPassword = "Passwords must match";
+    
+        if (!values.password_confirm) {
+            errors.password_confirm = "Required";
+        } else if (values.password !== values.password_confirm) {
+            errors.password_confirm = "Passwords must match";
         }
-        
+    
         return errors;
     };
 
     const handleSubmit = async (values) => {
-        const { username, email, password } = values;
+        const { username, password, password_confirm } = values;
         try {
-            const response = await fetch("http://localhost:8000/signup/", {
+          const response = await fetch("http://localhost:8000/api/register/", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ username, email, password }),
-        });
-
+            body: JSON.stringify({ username, password, password_confirm }),
+          });
+    
             if (response.ok) {
                 const data = await response.json();
-                dispatch(setCurrentUser(data)); // Store user in Redux
-                setIsAuthenticated(true); // Set authentication state
+                dispatch(setCurrentUser(data));
+                setIsAuthenticated(true);
                 alert("Signup successful");
             } else {
                 const errorData = await response.json();
@@ -62,37 +56,35 @@ const Signup = ({ setIsAuthenticated }) => {
             <Formik
                 initialValues={{
                     username: "",
-                    email: "",
                     password: "",
-                    confirmPassword: "",
+                    password_confirm: "",
                 }}
                 validate={validateSignUpForm}
                 onSubmit={handleSubmit}
-            >
-                <Form className="signup-form"> {/* Applying form styles */}
+>
+                <Form className="signup-form">
                     <div>
                         <label htmlFor="username">Username</label>
                         <Field name="username" placeholder="Enter your username" />
                         <ErrorMessage name="username" component="div" className="error" />
                     </div>
-                    <div>
-                        <label htmlFor="email">Email</label>
-                        <Field name="email" placeholder="Enter your email" />
-                        <ErrorMessage name="email" component="div" className="error" />
-                    </div>
+                    
                     <div>
                         <label htmlFor="password">Password</label>
                         <Field name="password" type="password" placeholder="Enter your password" />
                         <ErrorMessage name="password" component="div" className="error" />
                     </div>
+                    
                     <div>
-                        <label htmlFor="confirmPassword">Confirm Password</label>
-                        <Field name="confirmPassword" type="password" placeholder="Confirm your password" />
-                        <ErrorMessage name="confirmPassword" component="div" className="error" />
+                        <label htmlFor="password_confirm">Confirm Password</label>
+                        <Field name="password_confirm" type="password" placeholder="Confirm your password" />
+                        <ErrorMessage name="password_confirm" component="div" className="error" />
                     </div>
+                    
                     <button type="submit">Sign Up</button>
                 </Form>
             </Formik>
+
         </div>
     );
 };

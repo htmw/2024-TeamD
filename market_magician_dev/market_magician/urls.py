@@ -48,7 +48,7 @@ urlpatterns = [
     path('search/', views.display_prediction, name="start_month"),
     path('search/', views.display_prediction, name="start_day"),
     path('page_test/', views.page_test, name='page_test'),
-    path('signup/', SignupView.as_view(), name='signup'),		
+    # path('signup/', SignupView.as_view(), name='signup'),		
     path('api/current-price/<str:ticker>/', views.get_current_price, name='get_current_price'),
 
 ]
